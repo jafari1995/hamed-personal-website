@@ -1,0 +1,145 @@
+---
+import "../styles/global.css";
+import "../styles/theme.css";
+import { site } from "../site.config";
+import { getCategories, categoryHref } from "../lib/posts";
+import { htmlLang, resolveDirection } from "../lib/locale";
+import MarketingBanner from "../components/MarketingBanner.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  language?: string;
+  direction?: string;
+  activeCategory?: string;
+  activeSubcategory?: string;
+  ogType?: string;
+}
+
+const {
+  title,
+  description = site.tagline,
+  language = site.language || "en",
+  direction = site.direction || "auto",
+  activeCategory = "",
+  activeSubcategory = "",
+  ogType = "website",
+} = Astro.props;
+
+const dir = resolveDirection(direction, language);
+const lang = htmlLang(language);
+const categories = await getCategories();
+const pageTitle = title.includes(site.name) ? title : `${title} · ${site.name}`;
+---
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={pageTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content={ogType} />
+    <meta name="theme-color" content="var(--color-bg)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body class={`dir-${dir}`}>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <MarketingBanner
+      activeCategory={activeCategory}
+      activeSubcategory={activeSubcategory}
+    />
+
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="brand-block">
+          <a class="brand" href="/">{site.name}</a>
+          <p class="brand-tag">{site.tagline}</p>
+        </div>
+
+        <nav class="topic-nav" aria-label="Categories and subcategories">
+          <a class:list={["nav-home", !activeCategory && "is-active"]} href="/">Home</a>
+          {categories.map((cat) => (
+            <div class:list={["nav-group", activeCategory === cat.id && "is-current"]}>
+              <a
+                class:list={["nav-cat", activeCategory === cat.id && !activeSubcategory && "is-active"]}
+                href={categoryHref(cat.id)}
+              >
+                {cat.label}
+              </a>
+              {cat.subcategories.length > 0 && (
+                <div class="nav-subs" role="group" aria-label={`${cat.label} subcategories`}>
+                  {cat.subcategories.map((sub) => (
+                    <a
+                      class:list={[
+                        "nav-sub",
+                        activeCategory === cat.id && activeSubcategory === sub.id && "is-active",
+                      ]}
+                      href={categoryHref(cat.id, sub.id)}
+                    >
+                      {sub.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="site-main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a class="brand" href="/">{site.name}</a>
+          <p>{site.about}</p>
+          {site.socialNote && <p class="footer-note">{site.socialNote}</p>}
+        </div>
+        <div class="footer-cols">
+          <div>
+            <h2 class="footer-label">Topics</h2>
+            <ul>
+              {categories.map((cat) => (
+                <li>
+                  <a href={categoryHref(cat.id)}>{cat.label}</a>
+                  {cat.subcategories.length > 0 && (
+                    <ul class="footer-subs">
+                      {cat.subcategories.map((sub) => (
+                        <li>
+                          <a href={categoryHref(cat.id, sub.id)}>{sub.label}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 class="footer-label">Start here</h2>
+            <ul>
+              {categories[0] && (
+                <li>
+                  <a href={categoryHref(categories[0].id)}>
+                    {categories[0].label}
+                  </a>
+                </li>
+              )}
+              <li><a href="/">Latest articles</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p class="footer-legal">
+        © {new Date().getFullYear()} {site.name}. Educational content — not medical advice.
+      </p>
+    </footer>
+  </body>
+</html>

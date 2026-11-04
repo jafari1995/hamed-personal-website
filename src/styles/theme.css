@@ -1,0 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+/* Theme: ocean-minimal — applied as src/styles/theme.css */
+:root {
+  --color-bg: #f7fbfd;
+  --color-surface: #ffffff;
+  --color-text: #0f2744;
+  --color-muted: #5a6f86;
+  --color-accent: #1a7a9c;
+  --color-accent-hover: #145f78;
+  --color-border: #d5e4ec;
+  --color-link: #1a7a9c;
+  --font-display: "Source Serif 4", Georgia, serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --radius: 6px;
+  --max-width: 44rem;
+  --space: 1.25rem;
+}

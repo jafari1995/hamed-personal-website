@@ -1,0 +1,89 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import RelatedPages from "../components/RelatedPages.astro";
+import { site } from "../site.config";
+import {
+  categoryHref,
+  postCategory,
+  postSubcategory,
+  labelize,
+  formatDate,
+  readingMinutes,
+} from "../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("articles");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const category = postCategory(post);
+const subcategory = postSubcategory(post);
+const mins = readingMinutes(post);
+const pageLang = post.data.language || site.language;
+---
+<BaseLayout
+  title={post.data.seo_title || post.data.title}
+  description={post.data.description || site.tagline}
+  language={pageLang}
+  direction={site.direction}
+  activeCategory={category}
+  activeSubcategory={subcategory}
+  ogType="article"
+>
+  <div class="prose-shell" style="width:min(100%, var(--prose-max));margin-inline:auto">
+    {(category || subcategory) && (
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">{site.name}</a>
+        {category && (
+          <>
+            <span>/</span>
+            <a href={categoryHref(category)}>{labelize(category)}</a>
+          </>
+        )}
+        {subcategory && (
+          <>
+            <span>/</span>
+            <a href={categoryHref(category, subcategory)}>{labelize(subcategory)}</a>
+          </>
+        )}
+      </nav>
+    )}
+
+    <article class="article">
+      <header class="article-header">
+        <div class="story-kicker">
+          {category && (
+            <a class="eyebrow" href={categoryHref(category)}>{labelize(category)}</a>
+          )}
+          {subcategory && (
+            <>
+              <span class="dot">·</span>
+              <a class="eyebrow quiet" href={categoryHref(category, subcategory)}>
+                {labelize(subcategory)}
+              </a>
+            </>
+          )}
+        </div>
+        <h1>{post.data.title}</h1>
+        <div class="story-meta">
+          {post.data.date && (
+            <time datetime={String(post.data.date)}>{formatDate(post.data.date)}</time>
+          )}
+          <span aria-hidden="true">·</span>
+          <span>{mins} min read</span>
+        </div>
+      </header>
+      <div class="article-body">
+        <Content />
+      </div>
+    </article>
+
+    <RelatedPages post={post} limit={4} />
+  </div>
+</BaseLayout>

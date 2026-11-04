@@ -1,0 +1,47 @@
+---
+import {
+  postHref,
+  postCategory,
+  postSubcategory,
+  categoryHref,
+  labelize,
+  formatDate,
+  readingMinutes,
+  type Post,
+} from "../lib/posts";
+
+interface Props {
+  post: Post;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const cat = postCategory(post);
+const sub = postSubcategory(post);
+const mins = readingMinutes(post);
+---
+<article class:list={["story", featured && "story-featured"]}>
+  <div class="story-kicker">
+    {cat && (
+      <a class="eyebrow" href={categoryHref(cat)}>{labelize(cat)}</a>
+    )}
+    {sub && (
+      <>
+        <span class="dot" aria-hidden="true">·</span>
+        <a class="eyebrow quiet" href={categoryHref(cat, sub)}>{labelize(sub)}</a>
+      </>
+    )}
+  </div>
+  <h2 class="story-title">
+    <a href={postHref(post)}>{post.data.title}</a>
+  </h2>
+  {post.data.description && <p class="story-excerpt">{post.data.description}</p>}
+  <div class="story-meta">
+    {post.data.date && <time datetime={String(post.data.date)}>{formatDate(post.data.date)}</time>}
+    <span aria-hidden="true">·</span>
+    <span>{mins} min read</span>
+  </div>
+  {featured && (
+    <a class="story-cta" href={postHref(post)}>Read the guide</a>
+  )}
+</article>

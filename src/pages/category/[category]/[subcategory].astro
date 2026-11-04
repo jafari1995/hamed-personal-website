@@ -1,0 +1,66 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { site } from "../../../site.config";
+import {
+  getCategories,
+  getPostsByCategory,
+  categoryHref,
+  labelize,
+} from "../../../lib/posts";
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.flatMap((cat) =>
+    cat.subcategories.map((sub) => ({
+      params: { category: cat.id, subcategory: sub.id },
+      props: {
+        category: cat.id,
+        subcategory: sub.id,
+        categoryLabel: cat.label,
+        subcategoryLabel: sub.label,
+        count: sub.count,
+      },
+    }))
+  );
+}
+
+const { category, subcategory, categoryLabel, subcategoryLabel, count } = Astro.props;
+const posts = await getPostsByCategory(category, subcategory);
+const catLabel = categoryLabel || labelize(category);
+const subLabel = subcategoryLabel || labelize(subcategory);
+---
+<BaseLayout
+  title={`${subLabel} · ${catLabel}`}
+  description={`${subLabel} guides from ${site.name}.`}
+  language={site.language}
+  direction={site.direction}
+  activeCategory={category}
+  activeSubcategory={subcategory}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="/">{site.name}</a>
+    <span>/</span>
+    <a href={categoryHref(category)}>{catLabel}</a>
+    <span>/</span>
+    <span>{subLabel}</span>
+  </nav>
+
+  <section class="page-hero">
+    <p class="section-label">{catLabel}</p>
+    <h1>{subLabel}</h1>
+    <p class="lede">
+      {count} article{count === 1 ? "" : "s"} focused on {subLabel.toLowerCase()}.
+    </p>
+  </section>
+
+  <section class="section">
+    {posts.length === 0 ? (
+      <div class="empty">No articles here yet.</div>
+    ) : (
+      <div class="story-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    )}
+  </section>
+</BaseLayout>

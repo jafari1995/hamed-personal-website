@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { site } from "../../../site.config";
+import {
+  getCategories,
+  getPostsByCategory,
+  categoryHref,
+  labelize,
+} from "../../../lib/posts";
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.map((cat) => ({
+    params: { category: cat.id },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const posts = await getPostsByCategory(category.id);
+const label = category.label || labelize(category.id);
+---
+<BaseLayout
+  title={`${label} guides`}
+  description={`${label} articles from ${site.name}. ${site.tagline}`}
+  language={site.language}
+  direction={site.direction}
+  activeCategory={category.id}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="/">{site.name}</a>
+    <span>/</span>
+    <span>{label}</span>
+  </nav>
+
+  <section class="page-hero">
+    <p class="section-label">Topic</p>
+    <h1>{label}</h1>
+    <p class="lede">
+      {category.count} guide{category.count === 1 ? "" : "s"} to help you make progress
+      without the noise.
+    </p>
+  </section>
+
+  {category.subcategories.length > 0 && (
+    <section class="section">
+      <h2 class="section-label">In this topic</h2>
+      <ul class="chip-row">
+        {category.subcategories.map((sub) => (
+          <li>
+            <a class="chip" href={categoryHref(category.id, sub.id)}>
+              {sub.label}
+              <span class="muted">· {sub.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="section-head">
+      <h2>All {label.toLowerCase()} guides</h2>
+    </div>
+    {posts.length === 0 ? (
+      <div class="empty">No articles in this topic yet.</div>
+    ) : (
+      <div class="story-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    )}
+  </section>
+</BaseLayout>

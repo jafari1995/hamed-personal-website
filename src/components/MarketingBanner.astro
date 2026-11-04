@@ -1,0 +1,44 @@
+---
+import headers from "../data/marketing.json";
+
+interface Props {
+  activeCategory?: string;
+  activeSubcategory?: string;
+}
+
+const { activeCategory = "", activeSubcategory = "" } = Astro.props;
+
+type Header = {
+  id: string;
+  text: string;
+  link_url?: string;
+  link_label?: string;
+  style?: string;
+  category?: string;
+  subcategory?: string;
+};
+
+const list = (headers as Header[]).filter((h) => {
+  if (!h?.text) return false;
+  const cat = (h.category || "").trim();
+  const sub = (h.subcategory || "").trim();
+  if (!cat) return true;
+  if (cat !== activeCategory) return false;
+  if (!sub) return true;
+  return sub === activeSubcategory;
+});
+---
+{list.length > 0 && (
+  <div class="marketing-stack" role="region" aria-label="Announcements">
+    {list.map((h) => (
+      <div class={`marketing-banner style-${h.style || "promo"}`}>
+        <p class="marketing-text">{h.text}</p>
+        {h.link_url && (
+          <a class="marketing-link" href={h.link_url}>
+            {h.link_label || "Learn more"}
+          </a>
+        )}
+      </div>
+    ))}
+  </div>
+)}
