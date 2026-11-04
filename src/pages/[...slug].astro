@@ -31,15 +31,15 @@ const pageLang = post.data.language || site.language;
   title={post.data.seo_title || post.data.title}
   description={post.data.description || site.tagline}
   language={pageLang}
-  direction={site.direction}
+  direction="auto"
   activeCategory={category}
   activeSubcategory={subcategory}
   ogType="article"
 >
-  <div class="prose-shell" style="width:min(100%, var(--prose-max));margin-inline:auto">
+  <div class="prose-shell">
     {(category || subcategory) && (
-      <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="/">{site.name}</a>
+      <nav class="crumbs" aria-label="Breadcrumb" dir="ltr">
+        <a href="/"><bdi>{site.name}</bdi></a>
         {category && (
           <>
             <span>/</span>
@@ -70,7 +70,7 @@ const pageLang = post.data.language || site.language;
             </>
           )}
         </div>
-        <h1>{post.data.title}</h1>
+        <h1 dir="auto">{post.data.title}</h1>
         <div class="story-meta">
           {post.data.date && (
             <time datetime={String(post.data.date)}>{formatDate(post.data.date)}</time>

@@ -9,6 +9,8 @@ import {
   readingMinutes,
   type Post,
 } from "../lib/posts";
+import { inferDirection } from "../lib/locale";
+import { site } from "../site.config";
 
 interface Props {
   post: Post;
@@ -19,8 +21,9 @@ const { post, featured = false } = Astro.props;
 const cat = postCategory(post);
 const sub = postSubcategory(post);
 const mins = readingMinutes(post);
+const contentDir = inferDirection(post.data.language || site.language);
 ---
-<article class:list={["story", featured && "story-featured"]}>
+<article class:list={["story", featured && "story-featured"]} dir={contentDir} lang={post.data.language || undefined}>
   <div class="story-kicker">
     {cat && (
       <a class="eyebrow" href={categoryHref(cat)}>{labelize(cat)}</a>

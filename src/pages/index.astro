@@ -19,7 +19,7 @@ const primaryCat = categories[0];
     <div class="home-hero-copy">
       <p class="section-label">Practical guides</p>
       <h1>{site.name}</h1>
-      <p class="lede">{site.tagline}</p>
+      <p class="lede" dir="auto">{site.tagline}</p>
       <div class="hero-actions">
         {featured && (
           <a class="btn-primary" href={`/${featured.slug}/`}>Read latest guide</a>
@@ -43,7 +43,7 @@ const primaryCat = categories[0];
       </div>
       <div class="topic-strip">
         {categories.map((cat) => (
-          <div class="topic-link">
+          <div class="topic-link" dir="auto">
             <a href={categoryHref(cat.id)} style="text-decoration:none;color:inherit">
               <strong>{cat.label}</strong>
               <span>{cat.count} guide{cat.count === 1 ? "" : "s"}</span>
@@ -82,6 +82,6 @@ const primaryCat = categories[0];
 
   <aside class="trust-strip">
     <h2>Why this site exists</h2>
-    <p>{site.about}</p>
+    <p dir="auto">{site.about}</p>
   </aside>
 </BaseLayout>

@@ -55,41 +55,76 @@ const pageTitle = title.includes(site.name) ? title : `${title} · ${site.name}`
 
     <header class="site-header">
       <div class="header-inner">
-        <div class="brand-block">
-          <a class="brand" href="/">{site.name}</a>
-          <p class="brand-tag">{site.tagline}</p>
-        </div>
+        <div class="header-bar">
+          <div class="brand-block">
+            <a class="brand" href="/" dir="auto">{site.name}</a>
+            <p class="brand-tag" dir="auto">{site.tagline}</p>
+          </div>
 
-        <nav class="topic-nav" aria-label="Categories and subcategories">
-          <a class:list={["nav-home", !activeCategory && "is-active"]} href="/">Home</a>
-          {categories.map((cat) => (
-            <div class:list={["nav-group", activeCategory === cat.id && "is-current"]}>
-              <a
-                class:list={["nav-cat", activeCategory === cat.id && !activeSubcategory && "is-active"]}
-                href={categoryHref(cat.id)}
-              >
-                {cat.label}
-              </a>
-              {cat.subcategories.length > 0 && (
-                <div class="nav-subs" role="group" aria-label={`${cat.label} subcategories`}>
-                  {cat.subcategories.map((sub) => (
-                    <a
-                      class:list={[
-                        "nav-sub",
-                        activeCategory === cat.id && activeSubcategory === sub.id && "is-active",
-                      ]}
-                      href={categoryHref(cat.id, sub.id)}
-                    >
-                      {sub.label}
-                    </a>
-                  ))}
+          <details class="nav-menu" open>
+            <summary class="nav-menu-toggle">
+              <span class="nav-menu-label">Topics</span>
+            </summary>
+            <nav class="topic-nav" aria-label="Categories and subcategories">
+              <a class:list={["nav-home", !activeCategory && "is-active"]} href="/">Home</a>
+              {categories.map((cat) => (
+                <div class:list={["nav-group", activeCategory === cat.id && "is-current"]}>
+                  <a
+                    class:list={["nav-cat", activeCategory === cat.id && !activeSubcategory && "is-active"]}
+                    href={categoryHref(cat.id)}
+                  >
+                    {cat.label}
+                  </a>
+                  {cat.subcategories.length > 0 && (
+                    <div class="nav-subs" role="group" aria-label={`${cat.label} subcategories`}>
+                      {cat.subcategories.map((sub) => (
+                        <a
+                          class:list={[
+                            "nav-sub",
+                            activeCategory === cat.id && activeSubcategory === sub.id && "is-active",
+                          ]}
+                          href={categoryHref(cat.id, sub.id)}
+                        >
+                          {sub.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
-        </nav>
+              ))}
+            </nav>
+          </details>
+        </div>
       </div>
     </header>
+    <script is:inline>
+      (() => {
+        const menu = document.querySelector(".nav-menu");
+        if (!menu) return;
+        const mq = window.matchMedia("(max-width: 767px)");
+        const sync = () => {
+          if (mq.matches) menu.removeAttribute("open");
+          else menu.setAttribute("open", "");
+        };
+        sync();
+        mq.addEventListener("change", sync);
+        menu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            if (mq.matches) menu.removeAttribute("open");
+          });
+        });
+        document.addEventListener("click", (event) => {
+          if (!mq.matches || !menu.hasAttribute("open")) return;
+          if (menu.contains(event.target)) return;
+          menu.removeAttribute("open");
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && menu.hasAttribute("open")) {
+            menu.removeAttribute("open");
+          }
+        });
+      })();
+    </script>
 
     <main id="main" class="site-main">
       <slot />
@@ -98,9 +133,9 @@ const pageTitle = title.includes(site.name) ? title : `${title} · ${site.name}`
     <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
-          <a class="brand" href="/">{site.name}</a>
-          <p>{site.about}</p>
-          {site.socialNote && <p class="footer-note">{site.socialNote}</p>}
+          <a class="brand" href="/" dir="auto">{site.name}</a>
+          <p dir="auto">{site.about}</p>
+          {site.socialNote && <p class="footer-note" dir="auto">{site.socialNote}</p>}
         </div>
         <div class="footer-cols">
           <div>
@@ -137,8 +172,8 @@ const pageTitle = title.includes(site.name) ? title : `${title} · ${site.name}`
           </div>
         </div>
       </div>
-      <p class="footer-legal">
-        © {new Date().getFullYear()} {site.name}. Educational content — not medical advice.
+      <p class="footer-legal" dir="ltr">
+        © {new Date().getFullYear()} <bdi>{site.name}</bdi>. Educational content — not medical advice.
       </p>
     </footer>
   </body>

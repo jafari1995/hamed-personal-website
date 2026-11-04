@@ -32,7 +32,7 @@ const list = (headers as Header[]).filter((h) => {
   <div class="marketing-stack" role="region" aria-label="Announcements">
     {list.map((h) => (
       <div class={`marketing-banner style-${h.style || "promo"}`}>
-        <p class="marketing-text">{h.text}</p>
+        <p class="marketing-text" dir="auto">{h.text}</p>
         {h.link_url && (
           <a class="marketing-link" href={h.link_url}>
             {h.link_label || "Learn more"}
