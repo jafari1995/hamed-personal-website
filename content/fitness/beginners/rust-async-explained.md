@@ -3,14 +3,14 @@ title: "Rust Async Explained Simply"
 seo_title: "Rust Async Explained: A Practical Guide"
 slug: rust-async-explained
 description: "Learn how Rust async works, from futures to executors, and when to choose it over threads."
-date: 2026-11-04T13:16:00.384756+00:00
+date: 2026-11-05T12:49:24.979409+00:00
 keywords: ["rust async", "rust futures", "async executors", "tokio"]
 primary_keyword: "rust async"
 language: "English"
 topic: "Rust async"
 category: "fitness"
 subcategory: "beginners"
-primary_search_intent: "Rust async"
+primary_search_intent: "rust async"
 theme: "ocean-minimal"
 status: "generated"
 content_id: a56d6a39de8c38fc
