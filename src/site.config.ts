@@ -4,7 +4,7 @@ export const site = {
   tagline: `Clear, practical articles you can finish in one sitting.`,
   about: `Useful guides and how-tos from حامد جعفرنژاد — short enough to finish, specific enough to act on.`,
   language: `persian`,
-  direction: `rtl` as "rtl" | "ltr" | "auto",
+  direction: `auto` as "rtl" | "ltr" | "auto",
   email: ``,
   socialNote: `New guides publish regularly. Pick a topic and build a reading habit.`,
 };
